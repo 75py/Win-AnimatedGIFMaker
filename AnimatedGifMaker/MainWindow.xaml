@@ -15,13 +15,13 @@
         <Button x:Name="button_Output" Content="アニメーションGIFを出力する" HorizontalAlignment="Left" Margin="124,135,0,0" VerticalAlignment="Top" Width="200" RenderTransformOrigin="-1.219,-3.045"/>
         <GroupBox x:Name="groupBox_Repeat" Header="リピート再生" HorizontalAlignment="Left" Height="85" Margin="19,35,0,0" VerticalAlignment="Top" Width="150">
             <StackPanel HorizontalAlignment="Left" Height="57" Margin="10,10,-2,0" VerticalAlignment="Top" Width="150">
-                <RadioButton x:Name="radioButton_NoRepeat" Content="リピートしない" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <RadioButton x:Name="radioButton_NoRepeat" Content="リピートしない" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True"/>
                 <RadioButton x:Name="radioButton_RepeatOnce" Content="1回だけリピートする" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <RadioButton x:Name="radioButton_Repeat" Content="ずっとリピートする" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </StackPanel>
         </GroupBox>
         <GroupBox x:Name="groupBox_Delay" Header="コマ送り速度(ms)" HorizontalAlignment="Left" Height="85" Margin="174,35,0,0" VerticalAlignment="Top" Width="150">
-            <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,10,-22,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="100"/>
+            <TextBox x:Name="textBox_delay" HorizontalAlignment="Left" Height="23" Margin="10,10,-22,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="100"/>
         </GroupBox>
 
     </Grid>
