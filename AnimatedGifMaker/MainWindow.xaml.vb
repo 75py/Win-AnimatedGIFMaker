@@ -1,11 +1,18 @@
 ﻿Imports System.IO
 Imports Microsoft.Win32
+Imports System.Runtime.InteropServices
 
 Class MainWindow
 
     Dim imageFiles As New List(Of String)
 
+    Dim startupPath As String
+
     Private Sub MainWindow_Loaded(sender As Object, e As EventArgs) Handles Me.Loaded
+        Dim exePath = Environment.GetCommandLineArgs()(0)
+        Dim exeFullPath = Path.GetFullPath(exePath)
+        startupPath = Path.GetDirectoryName(exeFullPath)
+
         Dim files As String() = System.Environment.GetCommandLineArgs()
         If files.Count > 1 Then
             For i = 1 To files.Count - 1
@@ -15,8 +22,13 @@ Class MainWindow
                 End If
             Next
         End If
-
         Validate()
+
+        LoadSettings()
+    End Sub
+
+    Private Sub MainWindow_Closed(sender As Object, e As EventArgs) Handles Me.Closed
+        SaveSettings()
     End Sub
 
 
@@ -124,4 +136,64 @@ Class MainWindow
         Debug.WriteLine(delayTimeBytes(1))
         Return graphicControlExtension
     End Function
+
+    <DllImport("KERNEL32.DLL")>
+    Public Shared Function WritePrivateProfileString(
+        ByVal lpAppName As String,
+        ByVal lpKeyName As String,
+        ByVal lpString As String,
+        ByVal lpFileName As String) As Integer
+    End Function
+
+    <DllImport("KERNEL32.DLL", CharSet:=CharSet.Auto)>
+    Public Shared Function GetPrivateProfileString(
+        ByVal lpAppName As String,
+        ByVal lpKeyName As String, ByVal lpDefault As String,
+        ByVal lpReturnedString As System.Text.StringBuilder, ByVal nSize As Integer,
+        ByVal lpFileName As String) As Integer
+    End Function
+
+    <DllImport("KERNEL32.DLL", CharSet:=CharSet.Auto)>
+    Public Shared Function GetPrivateProfileInt(
+        ByVal lpAppName As String,
+        ByVal lpKeyName As String, ByVal nDefault As Integer,
+        ByVal lpFileName As String) As Integer
+    End Function
+
+    Const INI_FILENAME = "\settings.ini"
+    Const INI_SECTION = "FOO"
+    Const INI_KEY_REPEAT = "REPEAT"
+    Const INI_KEY_DELAY = "DELAY"
+
+    Private Sub LoadSettings()
+        Dim repeat = GetPrivateProfileInt(INI_SECTION, INI_KEY_REPEAT, 0, startupPath & INI_FILENAME)
+        Select Case repeat
+            Case 0
+                radioButton_NoRepeat.IsChecked = True
+            Case 1
+                radioButton_RepeatOnce.IsChecked = True
+            Case Else
+                radioButton_Repeat.IsChecked = True
+        End Select
+
+        Dim delayStr As New System.Text.StringBuilder(capacity:=10)
+        GetPrivateProfileString(INI_SECTION, INI_KEY_DELAY, "1000", delayStr, delayStr.Capacity, startupPath & INI_FILENAME)
+        textBox_delay.Text = delayStr.ToString()
+    End Sub
+
+    Private Sub SaveSettings()
+        Dim repeat As String
+        If radioButton_NoRepeat.IsChecked Then
+            repeat = "0"
+        ElseIf radioButton_RepeatOnce.IsChecked Then
+            repeat = "1"
+        Else
+            repeat = "2"
+        End If
+        WritePrivateProfileString(INI_SECTION, INI_KEY_REPEAT, repeat, startupPath & INI_FILENAME)
+
+        WritePrivateProfileString(INI_SECTION, INI_KEY_DELAY, textBox_delay.Text, startupPath & INI_FILENAME)
+    End Sub
+
+
 End Class
