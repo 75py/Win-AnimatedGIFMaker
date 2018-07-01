@@ -105,7 +105,14 @@ Class MainWindow
                     Debug.WriteLine(header(10))
 
                     writer.Write(MakeGraphicControlExtension(delay))
-                    writer.Write(fileBytes.Skip(13).Take(fileBytes.Count - 13 - 1).ToArray())
+
+                    Dim nextBlock = fileBytes.Skip(13).Take(2)
+                    If nextBlock(0) = &H21 AndAlso nextBlock(1) = &HF9 Then
+                        ' 元々Graphic Control Extensionがあった場合、読み飛ばす
+                        writer.Write(fileBytes.Skip(13 + 8).Take(fileBytes.Count - 13 - 8 - 1).ToArray())
+                    Else
+                        writer.Write(fileBytes.Skip(13).Take(fileBytes.Count - 13 - 1).ToArray())
+                    End If
                 End Using
             Next
 
@@ -138,9 +145,6 @@ Class MainWindow
         Dim delayTimeBytes As Byte() = BitConverter.GetBytes(d)
         graphicControlExtension(4) = delayTimeBytes(0)
         graphicControlExtension(5) = delayTimeBytes(1)
-        Debug.WriteLine(delayTime)
-        Debug.WriteLine(delayTimeBytes(0))
-        Debug.WriteLine(delayTimeBytes(1))
         Return graphicControlExtension
     End Function
 
