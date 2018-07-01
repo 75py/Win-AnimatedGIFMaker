@@ -6,6 +6,16 @@ Class MainWindow
     Dim imageFiles As New List(Of String)
 
     Private Sub MainWindow_Loaded(sender As Object, e As EventArgs) Handles Me.Loaded
+        Dim files As String() = System.Environment.GetCommandLineArgs()
+        If files.Count > 1 Then
+            For i = 1 To files.Count - 1
+                Dim f = files(i)
+                If File.Exists(f) Then
+                    imageFiles.Add(f)
+                End If
+            Next
+        End If
+
         Validate()
     End Sub
 
