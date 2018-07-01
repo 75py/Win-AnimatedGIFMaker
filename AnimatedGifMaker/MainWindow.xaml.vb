@@ -12,6 +12,7 @@ Class MainWindow
         Dim exePath = Environment.GetCommandLineArgs()(0)
         Dim exeFullPath = Path.GetFullPath(exePath)
         startupPath = Path.GetDirectoryName(exeFullPath)
+        LoadSettings()
 
         Dim files As String() = System.Environment.GetCommandLineArgs()
         If files.Count > 1 Then
@@ -21,10 +22,16 @@ Class MainWindow
                     imageFiles.Add(f)
                 End If
             Next
-        End If
-        Validate()
 
-        LoadSettings()
+            If imageFiles.Count > 0 Then
+                Hide()
+                button_Output_Click(Nothing, Nothing)
+                Close()
+                Return
+            End If
+        End If
+
+        Validate()
     End Sub
 
     Private Sub MainWindow_Closed(sender As Object, e As EventArgs) Handles Me.Closed
@@ -194,6 +201,5 @@ Class MainWindow
 
         WritePrivateProfileString(INI_SECTION, INI_KEY_DELAY, textBox_delay.Text, startupPath & INI_FILENAME)
     End Sub
-
 
 End Class
